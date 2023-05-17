@@ -42,14 +42,16 @@ p{
 h1{
   font-size: 20px !important;
 }
+
 .btn{
-  border-color: none !important;
+  outline: black;
   background-color: black !important;
-  color: whitesmoke !important;
+  color: white !important;
   margin-bottom: 15px  ;
   
   box-shadow: none !important;
 }
+
 .bs{
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
  margin-top: 20px !important;

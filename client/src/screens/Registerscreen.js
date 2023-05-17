@@ -4,6 +4,7 @@ import Loader from "../components/Loader";
 import Error from "../components/Error";
 import Success from "../components/Success";
 
+
 function Registerscreen() {
   const [name, setname] = useState("");
   const [email, setemail] = useState("");
@@ -32,6 +33,7 @@ function Registerscreen() {
       setemail("")
       setpassword("")
       setcpassword("")
+     
     } catch (error) {
       console.log(error)
       setloading(false)
@@ -91,7 +93,7 @@ function Registerscreen() {
               }}
             />
 
-            <button className="btn btn-primary mt-3" onClick={register}>Register</button>
+            <button className="btn  mt-3" onClick={register}>Register</button>
           </div>
         </div>
       </div>

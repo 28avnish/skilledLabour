@@ -15,6 +15,7 @@ function Homescreen() {
   const [error, seterror] = useState();
   const [fromdate, setfromdate] = useState();
   const [todate, settodate] = useState();
+  const [duplicateservices, setduplicateservices] = useState([]);
 
   const [searchkey, setsearchkey] = useState("");
   const [type, settype] = useState("all");
@@ -25,6 +26,7 @@ function Homescreen() {
         setloading(true);
         const { data } = await axios.get("/api/services/getallservices");
         setservices(data);
+        setduplicateservices(data);
         setloading(false);
       } catch (error) {
         seterror(true);
@@ -38,31 +40,67 @@ function Homescreen() {
   function filterByDate(dates) {
     setfromdate(dates[0].format("DD-MM-YYYY"));
     settodate(dates[1].format("DD-MM-YYYY"));
+   
+
+    var tempservices = [];
+    var availability = true;
+    for (const service of duplicateservices) {
+      if (service.currentbookings.length > 0) {
+        for (const booking of service.currentbookings) {
+          if (
+            !moment(
+              moment(dates[0].format("DD-MM-YYYY")).isBetween(
+                booking.fromdate,
+                booking.todate
+              )
+            ) &&
+            !moment(
+              moment(dates[1].format("DD-MM-YYYY")).isBetween(
+                booking.fromdate,
+                booking.todate
+              )
+            )
+          ) {
+            if (
+              dates[0].format("DD-MM-YYYY") !== booking.fromdate &&
+              dates[0].format("DD-MM-YYYY") !== booking.todate &&
+              dates[1].format("DD-MM-YYYY") !== booking.fromdate &&
+              dates[1].format("DD-MM-YYYY") !== booking.todate
+            ) {
+              availability = true;
+            }
+          }
+        }
+      }
+
+      if (availability === true || service.currentbookings.length === 0) {
+        tempservices.push(service);
+      }
+
+      setservices(tempservices);
+    }
   }
 
+  function filterBySearch() {
+    
+    const tempservices = duplicateservices.filter(service =>
+      service.city.toLowerCase().includes(searchkey.toLowerCase())
+    )
 
-  // function filterBySearch() {
-  //   if (!searchkey) {
-  //     // If the search key is empty, return all the services without filtering
-  //     setservices(services);
-  //   } else {
-  //     const tempservices = services.filter(service => 
-  //       service.service.toLowerCase().includes(searchkey.toLowerCase())
-  //     );
-  //     setservices(tempservices);
-  //   }
-  // }
- 
-  // function filterByType(e){
-  //  settype(e)
-  //   if(e!=="all"){
-  //     const tempservices = services.filter(service=>service.service.toLowerCase()==e.toLowerCase())
-  //     setservices(tempservices)
-  //   }
-  //   else{
-  //     setservices(services)
-  //   }
-  // }
+    setservices(tempservices)
+  }
+
+  function filterByType(e){
+    settype(e)
+    if(e !== 'all'){
+      const tempservices = duplicateservices.filter(service=>service.service.toLowerCase()===e.toLowerCase())
+      setservices(tempservices)
+     }
+    else{
+      setservices(duplicateservices)
+    }
+
+  }
 
   return (
     <div className="container">
@@ -76,12 +114,17 @@ function Homescreen() {
             type="text"
             className="form-control"
             placeholder="Search City"
-            />
-            
+            value={searchkey}
+            onChange={(e)=>{setsearchkey(e.target.value)}}
+            onKeyUp={filterBySearch}
+          />
         </div>
 
         <div className="col-md-3 ">
-          <select className="form-control" >
+          <select className="form-control"
+          value={type}
+          onChange={(e)=>{filterByType(e.target.value)}}>
+
             <option value="all">All Services</option>
             <option value="plumber">Plumber</option>
             <option value="carpenter">Carpenter</option>

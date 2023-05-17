@@ -44,7 +44,7 @@ function Navbar() {
                       aria-labelledby="dropdownMenuButton"
                     >
                       <a class="dropdown-item" href="/profile">
-                        Profile
+                        Account
                       </a>
                       <a class="dropdown-item" href="#" onClick={logout}>
                         Logout

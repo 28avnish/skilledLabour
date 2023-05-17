@@ -62,7 +62,7 @@ function Loginscreen() {
               }}
             />
 
-            <button className="btn btn-primary mt-3" onClick={Login}>Login</button>
+            <button className="btn mt-3" onClick={Login}>Login</button>
           
         </div>
       </div>

@@ -60,7 +60,7 @@ function Bookingscreen() {
         const result = await axios.post('/api/bookings/bookservice', bookingDetails)
         setloading(false)     
         Swal.fire('Congratulations','Your Service Booked Successfully','success').then(result=>{
-          window.location.href='/bookings'
+          window.location.href='/profile'
         })
       } catch (error) {
         setloading(false)

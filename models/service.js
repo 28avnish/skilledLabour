@@ -23,11 +23,8 @@ const serviceSchema = mongoose.Schema(
       type:String,
       required: true
     },
-    currentBookings: {
-    type :  
-      [String],
-      required:true
-    },
+    currentbookings: [{ bookingid: String, fromdate: String, todate: String, userid: String, status: String },
+    ],
     description: {
       type: String,
       required: true,

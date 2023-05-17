@@ -18,20 +18,27 @@ const Profilescreen = () => {
   const items = [
     {
       key: "1",
-      label: `My Profile`,
+      label: <b>My Account</b>,
       children: (
-        <>
-          <h1>My Profile</h1>
-          <br />
-          <h1>Name : {user.name} </h1>
-          <h1>Email : {user.email} </h1>
-          <h1>isAdmin : {user.isAdmin ? "Yes" : "No"} </h1>
+        <><div className="col-md-6 bs ">
+      
+          <p><b>Name</b> : {user.name} </p>
+          <p><b>Email</b> : {user.email} </p>
+          <p><b>isAdmin</b> : {user.isAdmin ? "Yes": "No"}</p>
+           {user.isAdmin && (
+            <div className="text-right ">
+            <button className="btn  " onClick={()=>window.location.href="/admin"}>
+                Go to Admin Panel
+            </button>
+            </div>
+          )}
+          </div>
         </>
       ),
     },
     {
       key: "2",
-      label: `My Bookings`,
+      label: <b>My Bookings</b>,
       children: (
         <>
           <MyBookings />
@@ -131,7 +138,7 @@ export function MyBookings() {
                   {booking.status !== "cancelled" && (
                     <div className="text-right">
                       <button
-                        className="btn btn-primary"
+                        className="btn "
                         onClick={() => {
                           cancelBooking(booking._id, booking.serviceid);
                         }}

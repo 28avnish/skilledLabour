@@ -3,8 +3,8 @@ const router = express.Router();
 const Service = require("../models/service");
 const Booking = require("../models/booking");
 const { v4: uuidv4 } = require("uuid");
-const stripe = require('stripe')(
-  'sk_test_51N4NMSSDDaj6lzuQG3a1pikV5N9SSioQSfwOyeRv0pIRjcInr069AiENADeAtSYIQrEGTRACCXHDQtdv0NK14a7500GEvpXbxp'
+const stripe = require("stripe")(
+  "sk_test_51N4NMSSDDaj6lzuQG3a1pikV5N9SSioQSfwOyeRv0pIRjcInr069AiENADeAtSYIQrEGTRACCXHDQtdv0NK14a7500GEvpXbxp"
 );
 router.post("/bookservice", async (req, res) => {
   const { service, userid, fromdate, todate, totalamount, totaldays, token } =
@@ -27,72 +27,83 @@ router.post("/bookservice", async (req, res) => {
         idempotencyKey: uuidv4(),
       }
     );
-    
+
     if (payment) {
-     
-        const newbooking = new Booking({
-          service: service.service,
-          serviceid: service._id,
-          userid,
-          fromdate,
-          todate,
-          totalamount,
-          totaldays,
-          transactionId: "1234",
-        });
+      const newbooking = new Booking({
+        service: service.service,
+        serviceid: service._id,
+        userid,
+        fromdate,
+        todate,
+        totalamount,
+        totaldays,
+        transactionId: "1234",
+      });
 
-        const booking = await newbooking.save();
+      const booking = await newbooking.save();
 
-        // const servicetemp = await Service.findOne({_id:service._id})
-        // servicetemp.currentbookings.push({bookingid: booking._id, fromdate:fromdate, todate:todate})
+      const servicetemp = await Service.findOne({ _id: service._id });
 
-        // await servicetemp.save()
-       }
+      servicetemp.currentbookings.push({
+        bookingid: booking._id,
+        fromdate: fromdate,
+        todate: todate,
+        userid: userid,
+        status: booking.status,
+      });
+
+      await servicetemp.save();
+    }
 
     res.send("Payment Successful, Your Service is Booked");
   } catch (error) {
-     console.error(`Error processing payment: ${error.message}`);
-    return res.status(400).json({ error: 'Error processing payment' });
+    console.error(`Error processing payment: ${error.message}`);
+    return res.status(400).json({ error: "Error processing payment" });
   }
 });
 
-router.post("/getbookingsbyuserid",async(req,res)=>{
-  const userid = req.body.userid
+router.post("/getbookingsbyuserid", async (req, res) => {
+  const userid = req.body.userid;
 
   try {
-    const bookings = await Booking.find({userid: userid})
-    res.send(bookings)
+    const bookings = await Booking.find({ userid: userid });
+    res.send(bookings);
   } catch (error) {
-    return res.status(400).json({ error: 'Error bookings' });
+    return res.status(400).json({ error: "Error bookings" });
+  }
+});
+
+router.post("/cancelbooking", async (req, res) => {
+  const { bookingid, serviceid } = req.body;
+
+  try {
+    const bookingitem = await Booking.findOne({ _id: bookingid });
     
-  }
-})
+    bookingitem.status = "cancelled";
+    await bookingitem.save();
 
-router.post("/cancelbooking", async(req,res)=>{
+    const service = await Service.findOne({_id: serviceid});
+    const bookings = service.currentbookings
 
-  const {bookingid, serviceid}= req.body
+    const temp = bookings.filter(booking => booking.bookingid.toString() !== bookingid  )
+    service.currentbookings = temp
 
-   try {
-    const bookingitem= await Booking.findOne({ _id : bookingid
-    })
-    bookingitem.status = 'cancelled'
-    await bookingitem.save()
-     
-    res.send("Your Booking Cancelled Successfully")
+    await service.save()
+    
 
-   } catch (error) {
-    return res.status(400).json({ error: 'Error cancelled booking' });
-   }
-})
-
-router.get('/getallbookings', async(req,res)=>{
-
-  try {
-    const bookings= await Booking.find()
-    res.send(bookings)
+    res.send("Your Booking Cancelled Successfully");
   } catch (error) {
-    return res.status(400).json({ error: 'Error Getallbookings' });
+    return res.status(400).json({ error: "Error cancelled booking" });
   }
-})
+});
+
+router.get("/getallbookings", async (req, res) => {
+  try {
+    const bookings = await Booking.find();
+    res.send(bookings);
+  } catch (error) {
+    return res.status(400).json({ error: "Error Getallbookings" });
+  }
+});
 
 module.exports = router;

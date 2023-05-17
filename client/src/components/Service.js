@@ -14,18 +14,18 @@ function Service({service, fromdate, todate}) {
         <img src={service.profilePic} className="smallimg"/>
         </div>
         <div className='col-md-7 mt-3'>
-            <b><h1> Service: {service.service}</h1>
-            <p>Name: {service.name}</p>
-            <p> Phonenumber: {service.phoneNumber}</p>
-            <p> ChargesStartedWith: {service.chargesStartedWith}</p>
-            <p> City: {service.city}</p></b>
+            <b><h1> Service : {service.service}</h1>
+            <p>Name : {service.name}</p>
+            <p> Phonenumber : {service.phoneNumber}</p>
+            <p> Service Charge : ₹ {service.chargesStartedWith}</p>
+            <p> City : {service.city}</p></b>
 
             <div style={{float:'right'}}> 
             {(fromdate && todate) && (<Link to={`/book/${service._id}/${fromdate}/${todate}`}>
-              <button className='btn btn-primary margin-right'>Book Now</button>
+              <button className='btn  margin-right'>Book Now</button>
               </Link>)}
               
-                <button className='btn btn-primary' onClick={handleShow}>View Details</button>
+                <button className='btn ' onClick={handleShow}>View Details</button>
             </div>
 
             </div>    

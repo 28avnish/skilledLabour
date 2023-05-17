@@ -1,6 +1,10 @@
 const mongoose  = require("mongoose");
 const bookingSchema = mongoose.Schema({
-
+    status : {
+        type:String,
+        required:true,
+        default:'booked'
+    },
     service : {
         type:String,
         required:true
@@ -33,11 +37,7 @@ const bookingSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    status : {
-        type:String,
-        required:true,
-        default:'booked'
-    }
+    
 
 },{timestamps:true})
 
